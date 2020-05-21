@@ -41,6 +41,8 @@ else
 
 @section scripts{
     <script>
+        $("#movies").DataTable();
+
         $(document).ready(function () {
             // To optimize the below code we added .js-delete in selector-string paramenter
             // Now this will reduce the processing as the action will be called on Table and then on control with js-delete class.
