@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Vidly.Models.Movie>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Movies List</h2>
+<p>
+    @Html.ActionLink("New Movie", "New", "Movies", null, new { @class = "btn btn-primary" })
+</p>
+@if (!Model.Any())
+{
+    <p>We don't have any movies yet!</p>
+}
+else
+{
+    <table id="movies" class="table table-condensed table-bordered">
+        <thead>
+            <tr>
+                <th>Movies</th>
+                <th>No in Stock</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var movie in Model)
+            {
+                <tr>
+                    <td>
+                        @*@Html.ActionLink(movie.Name, "Details", "Movies", new { id = movie.ID }, null)*@
+                        @Html.ActionLink(movie.Name, "Edit", "Movies", new { id = movie.ID }, null)
+                    </td>
+                    <td>@movie.NumberInStock</td>
+                    <td><input data-movie-id="@movie.ID" type="button" class="btn-link js-delete" value="Delete" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            // To optimize the below code we added .js-delete in selector-string paramenter
+            // Now this will reduce the processing as the action will be called on Table and then on control with js-delete class.
+            //$("#movies .js-delete").on("click", function () {
+            $("#movies").on("click", ".js-delete", function () {
+                var button = $(this);
+
+                bootbox.confirm("Are you sure you want to delete the Movie?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/movies/" + button.attr("data-movie-id"),
+                            method: "DELETE",
+                            success: function () {
+                                button.parents("tr").remove();
+                            }
+                        })
+                    }
+                });
+            });
+        });
+    </script>
+}
+
